@@ -62,8 +62,6 @@ const renderPictures = async searchStr => {
       refs.loadMoreBtnEl.removeEventListener('click', onLoadMorePressed);
     }
 
-    smoothScroll();
-
     refs.loaderEl.classList.toggle('is-hidden');
   } catch (error) {
     refs.loaderEl.classList.toggle('is-hidden');
@@ -72,7 +70,7 @@ const renderPictures = async searchStr => {
   }
 };
 
-refs.searchFormEl.addEventListener('submit', event => {
+refs.searchFormEl.addEventListener('submit', async event => {
   event.preventDefault();
   params.currentPage = 1;
   refs.galleryEl.innerHTML = '';
@@ -81,15 +79,16 @@ refs.searchFormEl.addEventListener('submit', event => {
 
   if (!searchStr) return;
 
+  await renderPictures(searchStr);
+
   refs.loadMoreBtnEl.classList.remove('is-hidden');
   refs.endTextEl.classList.add('is-hidden');
   refs.loadMoreBtnEl.addEventListener('click', onLoadMorePressed);
-
-  renderPictures(searchStr);
 });
 
 const onLoadMorePressed = async event => {
   params.currentPage += 1;
   const searchStr = refs.searchInputEl.value.trim();
   renderPictures(searchStr);
+  smoothScroll();
 };
