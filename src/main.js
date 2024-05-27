@@ -38,11 +38,13 @@ const smoothScroll = () => {
 };
 
 const renderPictures = async searchStr => {
-  refs.loaderEl.classList.toggle('is-hidden');
+  refs.loaderEl.classList.remove('is-hidden');
   try {
     const images = await getPictures(searchStr, params);
 
     if (!images.hits.length && params.currentPage === 1) {
+      refs.loadMoreBtnEl.classList.add('is-hidden');
+      refs.loaderEl.classList.add('is-hidden');
       showErrorMessage(
         'Sorry, there are no images matching your search query. Please try again!'
       );
@@ -50,6 +52,8 @@ const renderPictures = async searchStr => {
     }
 
     updateGallery(images.hits);
+
+    refs.loadMoreBtnEl.classList.remove('is-hidden');
 
     lightbox.refresh();
 
@@ -62,11 +66,9 @@ const renderPictures = async searchStr => {
       refs.loadMoreBtnEl.removeEventListener('click', onLoadMorePressed);
     }
 
-    refs.loaderEl.classList.toggle('is-hidden');
+    refs.loaderEl.classList.add('is-hidden');
   } catch (error) {
-    refs.loaderEl.classList.toggle('is-hidden');
     showErrorMessage('Unknown error. Please try again!');
-    console.error(error);
   }
 };
 
@@ -81,7 +83,7 @@ refs.searchFormEl.addEventListener('submit', async event => {
 
   await renderPictures(searchStr);
 
-  refs.loadMoreBtnEl.classList.remove('is-hidden');
+  // refs.loadMoreBtnEl.classList.remove('is-hidden');
   refs.endTextEl.classList.add('is-hidden');
   refs.loadMoreBtnEl.addEventListener('click', onLoadMorePressed);
 });
